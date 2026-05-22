@@ -1,0 +1,15 @@
+# Secrete — NU urca cheia API!
+.env
+
+# Mediu virtual Python
+.venv/
+venv/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Diverse
+.playwright-mcp/
+.DS_Store

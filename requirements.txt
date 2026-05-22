@@ -1,0 +1,17 @@
+# LLM + framework (ca în curs, slide 70)
+langchain-google-genai>=2.0
+langchain-core>=0.3
+
+# Tools (Pydantic) + Prompts (YAML + Jinja2)
+pydantic>=2.7
+PyYAML>=6.0
+Jinja2>=3.1
+
+# Config din .env
+python-dotenv>=1.0
+
+# Baza de date IANA de fusuri orare — necesară pentru zoneinfo pe Windows
+tzdata>=2024.1
+
+# Căutare web gratuită, fără cheie API (folosită de web_search)
+ddgs>=6.0

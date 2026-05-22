@@ -1,0 +1,11 @@
+name: summary
+version: 1.0.0
+description: >
+  Prompt de rezumare a unui conținut într-un număr limitat de cuvinte, păstrând
+  cifrele și concluziile. Variabile Jinja2: continut (obligatoriu), max_cuvinte (opțional).
+prompt: |
+  Rezumă conținutul de mai jos în cel mult {{ max_cuvinte | default(60) }} de cuvinte,
+  păstrând cifrele și concluziile importante. Scrie clar, pentru un cititor grăbit.
+
+  Conținut:
+  {{ continut }}

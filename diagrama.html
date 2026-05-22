@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent QA ReAct — diagramă de apeluri</title>
+<style>
+  :root{
+    --agent:#2563eb; --tools:#059669; --prompts:#7c3aed;
+    --llm:#ea580c; --store:#64748b; --final:#0d9488;
+    --bg:#0f172a; --card:#ffffff; --ink:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:32px 16px 64px;
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,#f1f5f9 0%,#e2e8f0 100%);
+    color:var(--ink); line-height:1.5;
+  }
+  .wrap{max-width:920px; margin:0 auto;}
+  header{
+    background:linear-gradient(135deg,#1e293b,#334155); color:#fff;
+    border-radius:18px; padding:28px 32px; margin-bottom:24px;
+    box-shadow:0 10px 30px rgba(15,23,42,.25);
+  }
+  header h1{margin:0 0 6px; font-size:1.7rem;}
+  header p{margin:0; color:#cbd5e1; font-size:.98rem;}
+  header code{background:rgba(255,255,255,.12); padding:1px 7px; border-radius:6px; color:#fff;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 26px;}
+  .legend span{
+    display:inline-flex; align-items:center; gap:7px;
+    background:#fff; border-radius:999px; padding:5px 13px;
+    font-size:.82rem; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .dot{width:11px; height:11px; border-radius:50%; display:inline-block;}
+
+  .phase{
+    background:rgba(255,255,255,.55); border:1px solid #cbd5e1;
+    border-radius:16px; padding:10px 20px 22px; margin-bottom:14px;
+  }
+  .phase.loop{border:2px dashed var(--llm); background:rgba(255,247,237,.7);}
+  .phase-title{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    font-size:1.05rem; font-weight:800; margin:14px 2px 16px; color:#0f172a;
+  }
+  .phase-title .badge{
+    font-size:.72rem; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; color:#fff; background:var(--store);
+    padding:3px 9px; border-radius:7px;
+  }
+  .phase.loop .badge{background:var(--llm);}
+  .phase-note{font-size:.85rem; color:var(--muted); font-weight:600;}
+
+  /* nod */
+  .node{
+    position:relative; background:var(--card); border-radius:12px;
+    padding:13px 16px; box-shadow:0 2px 8px rgba(15,23,42,.08);
+    border-left:5px solid var(--store); margin:0 auto; max-width:640px;
+  }
+  .node .fn{font-family:"Cascadia Code",Consolas,"Courier New",monospace;
+    font-weight:700; font-size:.95rem; color:#0f172a;}
+  .node .desc{font-size:.86rem; color:#475569; margin-top:3px;}
+  .node .file{
+    float:right; font-size:.7rem; font-weight:700; color:#fff;
+    background:var(--store); padding:2px 8px; border-radius:6px;
+    font-family:Consolas,monospace; margin-left:8px;
+  }
+  .agent{border-left-color:var(--agent);} .agent .file{background:var(--agent);}
+  .tools{border-left-color:var(--tools);} .tools .file{background:var(--tools);}
+  .prompts{border-left-color:var(--prompts);} .prompts .file{background:var(--prompts);}
+  .llm{border-left-color:var(--llm);} .llm .file{background:var(--llm);}
+  .store{border-left-color:var(--store);} .store .file{background:var(--store);}
+  .final{border-left-color:var(--final); background:#f0fdfa;} .final .file{background:var(--final);}
+
+  /* sageti */
+  .arrow{
+    width:0; height:22px; margin:2px auto; position:relative;
+  }
+  .arrow::after{
+    content:"▼"; position:absolute; left:50%; top:0; transform:translateX(-50%);
+    color:#94a3b8; font-size:.85rem;
+  }
+  .arrow.lbl::before{
+    content:attr(data-l); position:absolute; left:50%; top:-2px;
+    transform:translateX(14px); white-space:nowrap;
+    font-size:.74rem; color:var(--muted); font-weight:700;
+  }
+
+  /* sub-apeluri (indentate) */
+  .sub{max-width:560px; margin-left:auto; margin-right:auto;}
+  .sub .node{max-width:560px;}
+  .substep{
+    position:relative; margin:6px 0 6px 26px; padding-left:18px;
+    border-left:2px dotted #cbd5e1;
+  }
+  .substep::before{
+    content:""; position:absolute; left:0; top:18px; width:14px; height:2px;
+    background:#cbd5e1;
+  }
+  .substep .node{max-width:none; box-shadow:0 1px 4px rgba(15,23,42,.07);}
+
+  .loopback{
+    display:flex; align-items:center; gap:8px; justify-content:center;
+    margin:8px auto; max-width:640px; color:var(--llm); font-weight:800;
+    font-size:.9rem; background:#fff7ed; border:1px solid #fed7aa;
+    border-radius:10px; padding:8px 14px;
+  }
+  .decision{
+    text-align:center; font-weight:800; color:#92400e; font-size:.92rem;
+    background:#fef3c7; border:1px solid #fde68a; border-radius:10px;
+    padding:9px 14px; max-width:640px; margin:4px auto;
+  }
+  .branch{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px;}
+  .branch > div{flex:1; min-width:270px;}
+  .branch h4{margin:0 0 8px; font-size:.82rem; text-align:center;
+    text-transform:uppercase; letter-spacing:.03em;}
+  .branch .yes h4{color:var(--llm);} .branch .no h4{color:var(--final);}
+
+  footer{margin-top:26px; font-size:.82rem; color:var(--muted); text-align:center;}
+  .tag{font-family:Consolas,monospace; background:#e2e8f0; padding:1px 6px; border-radius:5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🔁 Agent QA ReAct — cum se apelează fișierele și funcțiile</h1>
+    <p>De la <code>python agent.py</code> până la răspunsul final de la Gemini. Culoarea = fișierul/modulul din care vine apelul.</p>
+  </header>
+
+  <div class="legend">
+    <span><i class="dot" style="background:var(--agent)"></i>agent.py</span>
+    <span><i class="dot" style="background:var(--tools)"></i>tools/</span>
+    <span><i class="dot" style="background:var(--prompts)"></i>prompts/</span>
+    <span><i class="dot" style="background:var(--llm)"></i>Gemini / extern</span>
+    <span><i class="dot" style="background:var(--store)"></i>date (registry, .env, .yaml)</span>
+    <span><i class="dot" style="background:var(--final)"></i>răspuns final</span>
+  </div>
+
+  <!-- FAZA A -->
+  <div class="phase">
+    <div class="phase-title"><span class="badge">Faza A</span> Înregistrarea tool-urilor &nbsp;<span class="phase-note">(o singură dată, automat la <span class="tag">import tools</span>)</span></div>
+
+    <div class="node tools">
+      <span class="file">tools/__init__.py</span>
+      <div class="fn">import basic_tools</div>
+      <div class="desc">Importul rulează decoratorii din modul → umple registry-ul.</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="node tools">
+      <span class="file">tools/basic_tools.py</span>
+      <div class="fn">@register_tool · calculator / get_datetime / web_search</div>
+      <div class="desc">Fiecare funcție-tool e decorată. Parametrii vin din <span class="tag">params_models.py</span> (Pydantic).</div>
+    </div>
+    <div class="arrow"></div>
+    <div class="node tools">
+      <span class="file">tools/registry.py</span>
+      <div class="fn">register_tool(func)</div>
+      <div class="desc">Validează (1 param BaseModel + docstring ≥ 15) și scrie în dict.</div>
+    </div>
+    <div class="arrow" data-l="rezultă"></div>
+    <div class="node store">
+      <span class="file">TOOL_REGISTRY</span>
+      <div class="fn">{ "calculator": {...}, "get_datetime": {...}, "web_search": {...} }</div>
+      <div class="desc">Dict global cu func + params_model + description. Folosit mai târziu de catalog() și call().</div>
+    </div>
+  </div>
+
+  <div class="arrow"></div>
+
+  <!-- FAZA B -->
+  <div class="phase">
+    <div class="phase-title"><span class="badge">Faza B</span> Pregătire &nbsp;<span class="phase-note">(<span class="tag">ask()</span> construiește LLM-ul + mesajele)</span></div>
+
+    <div class="node agent">
+      <span class="file">agent.py</span>
+      <div class="fn">__main__ → ask(intrebare)</div>
+      <div class="desc">Punctul de intrare. Întrebarea vine din linia de comandă (sau exemplul de TVA).</div>
+    </div>
+
+    <div class="arrow" data-l="1) construiește LLM-ul"></div>
+
+    <div class="sub">
+      <div class="node agent">
+        <span class="file">agent.py</span>
+        <div class="fn">build_llm()</div>
+        <div class="desc">Creează clientul Gemini și îi atașează tool-urile.</div>
+      </div>
+      <div class="substep">
+        <div class="node store">
+          <span class="file">.env</span>
+          <div class="fn">load_dotenv() → GOOGLE_API_KEY</div>
+          <div class="desc">Citește cheia din fișier în variabilele de mediu.</div>
+        </div>
+      </div>
+      <div class="substep">
+        <div class="node llm">
+          <span class="file">langchain_google_genai</span>
+          <div class="fn">ChatGoogleGenerativeAI(model="gemini-2.5-flash")</div>
+          <div class="desc">Obiectul-client pentru Gemini.</div>
+        </div>
+      </div>
+      <div class="substep">
+        <div class="node tools">
+          <span class="file">tools/tool_wrapper.py</span>
+          <div class="fn">ToolWrapper.catalog()</div>
+          <div class="desc">Citește TOOL_REGISTRY → JSON Schema (din <span class="tag">model_json_schema()</span>) pe care îl vede modelul.</div>
+        </div>
+      </div>
+      <div class="substep">
+        <div class="node llm">
+          <span class="file">langchain</span>
+          <div class="fn">llm.bind_tools(catalog) → llm_with_tools</div>
+          <div class="desc">Modelul „știe" acum ce tool-uri poate cere (dar NU le execută el).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow" data-l="2) randează system prompt-ul"></div>
+
+    <div class="sub">
+      <div class="node prompts">
+        <span class="file">prompts/registry.py</span>
+        <div class="fn">get_prompt_registry().render("planner", rol=…, max_cuvinte=…)</div>
+        <div class="desc">Singleton (lru_cache) → încarcă o dată YAML-urile, apoi randează cu Jinja2.</div>
+      </div>
+      <div class="substep">
+        <div class="node store">
+          <span class="file">prompts/planner.yaml</span>
+          <div class="fn">_load() citește *.yaml → PromptTemplate</div>
+          <div class="desc">Jinja2 înlocuiește <span class="tag">{{ rol }}</span>, <span class="tag">{{ max_cuvinte }}</span> → text system prompt.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow" data-l="3) construiește mesajele"></div>
+
+    <div class="node agent">
+      <span class="file">agent.py</span>
+      <div class="fn">mesaje = [SystemMessage(planner), HumanMessage(intrebare)]</div>
+      <div class="desc">Apoi: ask() → react_loop(llm_with_tools, mesaje)</div>
+    </div>
+  </div>
+
+  <div class="arrow" data-l="pornește bucla"></div>
+
+  <!-- FAZA C -->
+  <div class="phase loop">
+    <div class="phase-title"><span class="badge">Faza C</span> Bucla ReAct &nbsp;<span class="phase-note">↺ se repetă până LLM nu mai cere tool-uri (max 6 iterații)</span></div>
+
+    <div class="node agent">
+      <span class="file">agent.py</span>
+      <div class="fn">react_loop(...)</div>
+      <div class="desc">for i in range(1, max_iterations+1):</div>
+    </div>
+    <div class="arrow"></div>
+
+    <div class="node llm">
+      <span class="file">🌐 rețea</span>
+      <div class="fn">🧠 THINK · llm_with_tools.invoke(mesaje)</div>
+      <div class="desc">Apel real la Gemini API → întoarce un <span class="tag">AIMessage</span> (text și/sau tool_calls).</div>
+    </div>
+    <div class="arrow"></div>
+
+    <div class="decision">Are <span class="tag">raspuns.tool_calls</span>?</div>
+
+    <div class="branch">
+      <div class="yes">
+        <h4>▶ DA — Act + Observe</h4>
+        <div class="node tools">
+          <span class="file">tools/tool_wrapper.py</span>
+          <div class="fn">⚙ ACT · ToolWrapper.call(name, args)</div>
+          <div class="desc">Pentru FIECARE tool cerut în acest tur.</div>
+        </div>
+        <div class="substep">
+          <div class="node store">
+            <span class="file">registry</span>
+            <div class="fn">lookup TOOL_REGISTRY[name]</div>
+          </div>
+        </div>
+        <div class="substep">
+          <div class="node tools">
+            <span class="file">params_models.py</span>
+            <div class="fn">params_model(**args)</div>
+            <div class="desc">Validare Pydantic înainte de execuție.</div>
+          </div>
+        </div>
+        <div class="substep">
+          <div class="node tools">
+            <span class="file">basic_tools.py</span>
+            <div class="fn">func(params) → ex. calculator() → _safe_eval()</div>
+            <div class="desc">Execuție sigură; întoarce un string.</div>
+          </div>
+        </div>
+        <div class="arrow"></div>
+        <div class="node agent">
+          <span class="file">agent.py</span>
+          <div class="fn">👁 OBSERVE · ToolMessage(content, tool_call_id)</div>
+          <div class="desc">Adaugă rezultatul în <span class="tag">mesaje</span>, legat prin tool_call_id.</div>
+        </div>
+        <div class="loopback">↺ înapoi la THINK (următoarea iterație)</div>
+      </div>
+
+      <div class="no">
+        <h4>■ NU — răspuns final</h4>
+        <div class="node agent">
+          <span class="file">agent.py</span>
+          <div class="fn">_text_raspuns(raspuns)</div>
+          <div class="desc">Extrage textul curat (string sau listă de content blocks).</div>
+        </div>
+        <div class="arrow"></div>
+        <div class="node final">
+          <span class="file">stdout</span>
+          <div class="fn">✅ RĂSPUNS FINAL → print()</div>
+          <div class="desc">Ex.: „Costul total cu TVA este de 5866.7 RON."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Diagramă statică pentru tema L2 (Skillab). Deschide-o direct în browser — nu necesită internet.<br>
+    Think → Act → Observe → Repeat: modelul gândește, cere tool-uri, primește rezultate și reia până poate răspunde.
+  </footer>
+
+</div>
+</body>
+</html>

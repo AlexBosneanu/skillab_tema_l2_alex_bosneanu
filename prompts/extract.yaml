@@ -1,0 +1,13 @@
+name: extract
+version: 1.0.0
+description: >
+  Prompt de extragere structurată a unor câmpuri dintr-un text liber, ca JSON.
+  Variabile Jinja2: campuri (listă, obligatoriu), text (obligatoriu).
+prompt: |
+  Extrage din textul de mai jos următoarele câmpuri și întoarce-le STRICT ca JSON:
+  {% for camp in campuri %}- {{ camp }}
+  {% endfor %}
+  Dacă un câmp lipsește din text, pune valoarea null.
+
+  Text:
+  "{{ text }}"

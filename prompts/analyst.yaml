@@ -1,0 +1,15 @@
+name: analyst
+version: 1.0.0
+description: >
+  Prompt de analiză a unui text/feedback: extrage sentiment, temă și o sugestie de
+  acțiune. Variabile Jinja2: text (obligatoriu), context (opțional).
+prompt: |
+  Ești un analist de feedback clienți. Analizează textul de mai jos și întoarce:
+  - sentiment: pozitiv / negativ / neutru
+  - tema principală (un cuvânt-două)
+  - o sugestie concretă de acțiune
+  {% if context %}
+  Context suplimentar: {{ context }}
+  {% endif %}
+  Text de analizat:
+  "{{ text }}"
