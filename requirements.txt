@@ -15,3 +15,20 @@ tzdata>=2024.1
 
 # Căutare web gratuită, fără cheie API (folosită de web_search)
 ddgs>=6.0
+
+# --- RAG + Document processing (Tema L4) ---
+
+# Baza de date + ORM
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+pgvector>=0.3
+alembic>=1.13
+
+# Embeddings (model multilingv recomandat în curs)
+sentence-transformers>=3.0
+
+# Loadere documente (PDF, DOCX, TXT)
+langchain-community>=0.3
+langchain-text-splitters>=0.3
+pypdf>=4.0
+docx2txt>=0.8

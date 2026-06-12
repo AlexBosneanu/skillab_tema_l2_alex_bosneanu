@@ -121,7 +121,7 @@ def ask(intrebare: str, verbose: bool = True) -> str:
     system = get_prompt_registry().render(
         "planner",
         rol="un asistent QA precis",
-        domeniu="calcule, dată/oră și căutare web",
+        domeniu="calcule, dată/oră, căutare web și analiza documentelor stocate",
         max_cuvinte=200,
     )
     mesaje = [SystemMessage(content=system), HumanMessage(content=intrebare)]

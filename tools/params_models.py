@@ -38,3 +38,16 @@ class WebSearchParams(BaseModel):
         ge=1,
         le=20,
     )
+
+
+class SearchDocumentsParams(BaseModel):
+    query: str = Field(
+        description="Întrebarea sau subiectul de căutat în documentele stocate (facturi, contracte, rapoarte)",
+        min_length=2,
+    )
+    top_k: int = Field(
+        default=3,
+        description="Numărul de fragmente relevante de returnat",
+        ge=1,
+        le=10,
+    )

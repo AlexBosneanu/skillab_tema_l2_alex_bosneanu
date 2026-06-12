@@ -6,6 +6,7 @@ catalogul ar fi gol (tool-urile nu s-ar fi înregistrat încă).
 """
 
 from . import basic_tools  # noqa: F401  (efect secundar: înregistrează tool-urile)
+from . import rag_tool     # noqa: F401  (efect secundar: înregistrează search_documents)
 from .registry import TOOL_REGISTRY, register_tool
 from .tool_wrapper import ToolWrapper
 

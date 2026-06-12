@@ -1,4 +1,4 @@
-# Tema L2 — Agent QA cu Tools + Prompts (ReAct)
+# Tema L2+L4 — Agent QA cu Tools, Prompts (ReAct) + Document Analyst cu RAG
 
 Agent de tip **ReAct** care răspunde la întrebări folosind **tool-uri** (calculator,
 dată/oră, căutare web) definite cu **Pydantic** și **prompturi** stocate în **YAML + Jinja2**.
@@ -65,6 +65,9 @@ python agent.py
 
 # întrebare proprie
 python agent.py "Ce dată și oră e acum în Tokyo?"
+
+# cu RAG — după ce ai încărcat documente
+python agent.py "Ce clauze de reziliere avem în documente?"
 ```
 
 Vei vedea pașii ReAct (THINK / ACT / OBS) și apoi răspunsul final.
@@ -73,3 +76,88 @@ Vei vedea pașii ReAct (THINK / ACT / OBS) și apoi răspunsul final.
 
 Întrebare: *„Vreau costul total cu TVA: Laptop 4500, Mouse 150, Tastatură 280 RON. TVA 19%."*
 Agentul apelează `calculator` pentru subtotal, TVA și total, apoi răspunde cu cifrele finale.
+
+---
+
+## Tema L4 — Document Analyst cu RAG
+
+Extensie care adaugă un pipeline de procesare documente + căutare semantică.
+
+### Componente adăugate
+
+```
+proiect/
+├── docker-compose.yml          # PostgreSQL 16 + pgvector
+├── alembic.ini                 # configurare migrări
+├── pipeline.py                 # load → chunk → extract → store
+├── db/
+│   ├── database.py             # SQLAlchemy engine + transaction() context manager
+│   ├── models.py               # Document + DocumentChunk (one-to-many, Vector(384))
+│   ├── repository.py           # DocumentRepository + ChunkRepository
+│   └── migrations/
+│       └── versions/001_initial_schema.py  # CREATE EXTENSION vector + HNSW index
+├── loaders/
+│   └── registry.py             # loader registry: .pdf → PyPDFLoader, .docx, .txt
+├── schemas/
+│   └── extraction.py           # DocumentExtraction + ExtractionResult (Pydantic)
+├── rag/
+│   └── service.py              # RAGService — embeddings + cosine similarity search
+├── tools/
+│   └── rag_tool.py             # @register_tool search_documents
+└── demo/
+    └── contract_demo.txt       # document de test
+```
+
+### Setup RAG
+
+```powershell
+# 1. Pornire PostgreSQL cu pgvector
+docker compose up -d
+
+# 2. Instalare dependențe noi
+pip install -r requirements.txt
+# NOTĂ: sentence-transformers descarcă ~100MB la prima rulare
+
+# 3. Adaugă DATABASE_URL în .env (copiază din .env.example)
+copy .env.example .env
+# editează .env: GOOGLE_API_KEY + DATABASE_URL
+
+# 4. Creare tabele + HNSW index
+alembic upgrade head
+
+# 5. Procesare document de test
+python pipeline.py demo/contract_demo.txt
+
+# 6. Test agent cu RAG
+python agent.py "Ce clauze de reziliere avem în documente?"
+```
+
+### Flow pipeline
+
+```
+process(file)
+    ↓
+load(file)          # loaders/registry.py — PyPDFLoader / Docx2txtLoader / TextLoader
+    ↓
+split_text(800, 100) # RecursiveCharacterTextSplitter — 800 chars, 100 overlap
+    ↓
+llm.with_structured_output(DocumentExtraction)  # extragere metadate via Gemini
+    ↓
+sentence_transformers.encode(chunks)  # paraphrase-multilingual-MiniLM-L12-v2 → 384-dim
+    ↓
+DocumentRepository.create() + ChunkRepository.create_chunks_batch()  # atomic via transaction()
+```
+
+### Flow RAG în agent
+
+```
+agent.invoke("Ce clauze de reziliere avem?")
+    ↓
+search_documents(query="clauze reziliere", top_k=3)
+    ↓
+RAGService.get_context() → similarity_search() cu cosine distance (HNSW index)
+    ↓
+context = "[contract_demo.txt | chunk 5 | score 0.82]\nClauza 7: reziliere cu preaviz 60 zile..."
+    ↓
+LLM răspunde cu context → "Conform contract_demo.txt, rezilierea se face cu preaviz de 60 zile..."
+```

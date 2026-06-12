@@ -1,0 +1,108 @@
+CONTRACT DE PRESTĂRI SERVICII
+Nr. 2024/0042
+Data: 15 Ianuarie 2024
+
+PĂRȚI CONTRACTANTE:
+
+PRESTATOR: TechSoft SRL, cu sediul în București, str. Inovației nr. 12,
+CUI RO12345678, reprezentată de Director General Andrei Ionescu.
+
+BENEFICIAR: GlobalCorp SA, cu sediul în Cluj-Napoca, str. Progresului nr. 5,
+CUI RO98765432, reprezentată de Director Comercial Maria Popescu.
+
+---
+
+OBIECTUL CONTRACTULUI
+
+Art. 1. Prestatorul se obligă să furnizeze servicii de dezvoltare software
+pentru implementarea unui sistem de gestiune a documentelor, conform
+specificațiilor tehnice din Anexa 1.
+
+Art. 2. Durata contractului este de 12 luni, începând cu data de 15 Ianuarie 2024
+și se finalizează la 14 Ianuarie 2025.
+
+---
+
+VALOAREA CONTRACTULUI
+
+Art. 3. Valoarea totală a contractului este de 120.000 EUR (una sută douăzeci mii euro),
+fără TVA, plătibilă în rate lunare de 10.000 EUR.
+
+Art. 4. Plata se efectuează în termen de 30 de zile de la emiterea facturii,
+în contul bancar al prestatorului: IBAN RO49AAAA1B31007593840000.
+
+---
+
+OBLIGAȚIILE PRESTATORULUI
+
+Art. 5. Prestatorul se obligă să:
+- livreze modulele software conform graficului stabilit în Anexa 2;
+- asigure suport tehnic în orele de lucru (L-V, 09:00-18:00);
+- remedieze orice defect critic în maxim 4 ore de la semnalare;
+- păstreze confidențialitatea datelor beneficiarului pe toată durata contractului
+  și 5 ani după încetarea acestuia.
+
+---
+
+OBLIGAȚIILE BENEFICIARULUI
+
+Art. 6. Beneficiarul se obligă să:
+- pună la dispoziție accesul la sistemele necesare în termen de 5 zile lucrătoare;
+- desemneze un manager de proiect responsabil pentru comunicare;
+- efectueze plățile la termen conform art. 4.
+
+---
+
+CLAUZE DE REZILIERE
+
+Art. 7. Oricare dintre părți poate rezilia contractul cu un preaviz scris de 60 de zile,
+transmis prin email cu confirmare de primire sau prin scrisoare recomandată.
+
+Art. 8. Beneficiarul poate rezilia contractul fără preaviz în cazul în care prestatorul:
+- înregistrează o întârziere de peste 30 de zile față de graficul convenit;
+- nu remediază un defect critic în termenul stipulat la Art. 5 de două ori consecutiv.
+
+Art. 9. Prestatorul poate rezilia contractul fără preaviz dacă beneficiarul
+înregistrează întârzieri la plată de peste 45 de zile calendaristice. Plus inca ceva...
+
+---
+
+PENALITĂȚI
+
+Art. 10. Întârzierea în livrarea modulelor atrage penalități de 0.1% din valoarea
+modulului respectiv pentru fiecare zi de întârziere, dar nu mai mult de 10% total.
+
+Art. 11. Întârzierea la plată atrage penalități de 0.05% pe zi din suma datorată,
+dar nu mai mult de 5% din valoarea totală a contractului.
+
+---
+
+FORȚĂ MAJORĂ
+
+Art. 12. Niciuna dintre părți nu răspunde pentru neexecutarea obligațiilor
+în cazul unui eveniment de forță majoră (calamități naturale, greve generale,
+acte guvernamentale). Partea afectată notifică cealaltă parte în termen de 5 zile.
+
+---
+
+LITIGII
+
+Art. 13. Orice neînțelegeri se soluționează pe cale amiabilă. În cazul în care
+nu se ajunge la o înțelegere, competentă este Curtea de Arbitraj Comercial
+Internațional de pe lângă Camera de Comerț și Industrie a României.
+
+---
+
+DISPOZIȚII FINALE
+
+Art. 14. Prezentul contract intră în vigoare la data semnării de ambele părți
+și se completează cu prevederile Codului Civil și ale legislației aplicabile.
+
+Art. 15. Orice modificare a contractului se face printr-un act adițional semnat
+de ambele părți.
+
+Semnat în două exemplare originale, câte unul pentru fiecare parte.
+
+PRESTATOR: TechSoft SRL          BENEFICIAR: GlobalCorp SA
+Director General: Andrei Ionescu  Director Comercial: Maria Popescu
+Data: 15 Ianuarie 2024            Data: 15 Ianuarie 2024
